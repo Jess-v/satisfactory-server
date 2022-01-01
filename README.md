@@ -48,6 +48,14 @@ services:
         restart: unless-stopped
 ```
 
+Alternatively, run the Satisfactory server using [Kubernetes](https://kubernetes.io/docs/home/) and [Helm](https://helm.sh/docs/) from the cloned repository like this:
+
+```bash
+helm install satisfactory-server helm\
+```
+
+Configuration such as ports, environment variables, and resource limits is available by making changes to `helm\values.yaml`
+
 ## Environment Variables
 
 | Parameter | Default | Function |
