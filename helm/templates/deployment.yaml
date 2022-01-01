@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - env:
+            - name: AUTOPAUSE
+              value: {{ .Values.deployment.env.AUTOPAUSE | quote }}
+            - name: AUTOSAVEINTERVAL
+              value: {{ .Values.deployment.env.AUTOSAVEINTERVAL | quote }}
+            - name: AUTOSAVENUM
+              value: {{ .Values.deployment.env.AUTOSAVENUM | quote }}
+            - name: AUTOSAVEDISCONNECT
+              value: {{ .Values.deployment.env.AUTOSAVEONDISCONNECT | quote }}
+            - name: CRASHREPORT
+              value: {{ .Values.deployment.env.CRASHREPORT | quote }}
+            - name: DEBUG
+              value: {{ .Values.deployment.env.DEBUG | quote}}
+            - name: DISABLESEASONALEVENTS
+              value: {{ .Values.deployment.env.DISABLESEASONALEVENTS | quote}}
+            - name: MAXPLAYERS
+              value: {{ .Values.deployment.env.MAXPLAYERS | quote }}
+            - name: PGID
+              value: {{ .Values.deployment.env.PGID | quote }}
+            - name: PUID
+              value: {{ .Values.deployment.env.PUID | quote }}
+            - name: SKIPUPDATE
+              value: {{ .Values.deployment.env.SKIPUPDATE | quote }}
+            - name: STEAMBETA
+              value: {{ .Values.deployment.env.STEAMBETA | quote }}
+          name: {{ .Chart.Name }}
+          image: {{ .Values.deployment.image }}
+          resources:
+            requests:
+              cpu: {{ .Values.deployment.resource.requests.cpu}}
+              memory: {{ .Values.deployment.resource.requests.memory}}
+            limits:
+              cpu: {{ .Values.deployment.resource.limits.cpu }}
+              memory: {{ .Values.deployment.resource.limits.memory }}
+          ports:
+            - containerPort: 7777
+              protocol: UDP
+            - containerPort: 15000
+              protocol: UDP
+            - containerPort: 15777
+              protocol: UDP
+          volumeMounts:
+            - mountPath: /config
+              name: {{ .Chart.Name }}-claim
+      hostname: {{ .Chart.Name }}
+      restartPolicy: Always
+      
+      volumes:
+        - name: {{ .Chart.Name }}-claim
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-claim
